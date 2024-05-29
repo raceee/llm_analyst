@@ -1,8 +1,15 @@
 import requests
 import yaml
+import os
+# Get the directory of the current script
+current_directory = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the path to the config.yaml file in the parent directory
+config_path = os.path.join(current_directory, "..", "config.yaml")
+
 
 # Replace 'your_api_key' with your actual API key
-with open("config.yaml", "r") as f:
+with open(config_path, "r") as f:
     config = yaml.safe_load(f)
 
 url = f'https://newsapi.org/v2/sources?apiKey={config["newsapi_key"]}'
