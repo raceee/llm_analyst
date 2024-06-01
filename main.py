@@ -3,7 +3,7 @@ import requests
 import yaml
 import os
 
-# read config.yaml file
+# Read config.yaml file
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 
@@ -34,20 +34,39 @@ def get_openai_completion(prompt, model="gpt-4-turbo", max_tokens=150):
     else:
         raise Exception(f"Request failed with status code {response.status_code}: {response.text}")
 
+def split_text(text, delimiter="\n"):
+    lines = text.split(delimiter)
+    halfway = len(lines) // 2
+    return delimiter.join(lines[:halfway]), delimiter.join(lines[halfway:])
 
 def main():
     news_string = news_scrape()
-    prompt = f"""
-                Here are some recent news articles:
+    
+    part1, part2 = split_text(news_string)
+    
+    prompt1 = f"""
+                Here are some recent news articles (part 1):
 
-                {news_string}
+                {part1}
+
+                Based on the above articles, what do you think is the most important investment opportunity?
+                """
+    
+    prompt2 = f"""
+                Here are some recent news articles (part 2):
+
+                {part2}
 
                 Based on the above articles, what do you think is the most important investment opportunity?
                 """
 
-    completion = get_openai_completion(prompt)
-    print(completion)
+    completion1 = get_openai_completion(prompt1)
+    completion2 = get_openai_completion(prompt2)
+    
+    print("Response for part 1:")
+    print(completion1)
+    print("\nResponse for part 2:")
+    print(completion2)
 
 if __name__ == "__main__":
     main()
-
